@@ -2,27 +2,71 @@
 session_start();
 include('includes/dbconnection.php');
 error_reporting(0);
-if (strlen($_SESSION['bpmsaid']==0)) {
-  header('location:logout.php');
-  } else{
-if(isset($_POST['submit']))
-{
-$adminid=$_SESSION['bpmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
-if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
-$msg= "Su contraseña ha cambiado exitosamente"; 
+
+// if (strlen($_SESSION['bpmsaid']==0)) {
+//   header('location:logout.php');
+//   } else{
+// if(isset($_POST['submit']))
+// {
+// $adminid=$_SESSION['bpmsaid'];
+// $cpassword=md5($_POST['currentpassword']);
+// $newpassword=md5($_POST['newpassword']);
+// $query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
+// $row=mysqli_fetch_array($query);
+// if($row>0){
+// $ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
+// $msg= "Su contraseña ha cambiado exitosamente"; 
+// } else {
+
+// $msg="Tu contraseña actual es incorrecta";
+// }
+// }
+
+if (strlen($_SESSION['bpmsaid']) == 0) {
+    header('location:logout.php');
+    exit();
 } else {
+    if (isset($_POST['submit'])) {
+        $adminid = $_SESSION['bpmsaid'];
+        $currentPassword = $_POST['currentpassword'];
+        $newPassword = $_POST['newpassword'];
 
-$msg="Tu contraseña actual es incorrecta";
-}
+        // Obtención de la contraseña actual de la BD
+        $query = mysqli_query($con, "SELECT Password FROM tbladmin WHERE ID='$adminid'");
+        $row = mysqli_fetch_array($query);
 
+        if ($row) {
+            $storedPassword = $row['Password'];
+            $isValid = false;
 
+            // Verificación si es md5 o password_hash
+            if (strlen($storedPassword) == 32) {
+                if (md5($currentPassword) === $storedPassword) {
+                    $isValid = true;
+                }
+            } else {
+                if (password_verify($currentPassword, $storedPassword)) {
+                    $isValid = true;
+                }
+            }
 
-}
+            if ($isValid) {
+                // Generar hash seguro para nueva contraseña
+                $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                $ret = mysqli_query($con, "UPDATE tbladmin SET Password='$hashedNewPassword' WHERE ID='$adminid'");
+
+                if ($ret) {
+                    $msg = "Tu contraseña ha sido cambiada exitosamente.";
+                } else {
+                    $msg = "Error al actualizar la contraseña.";
+                }
+            } else {
+                $msg = "Tu contraseña actual es incorrecta.";
+            }
+        } else {
+            $msg = "Usuario no encontrado.";
+        }
+    }
 
   
 ?>
