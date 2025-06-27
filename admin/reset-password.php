@@ -104,7 +104,7 @@ function checkpass()
 {
 if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
 {
-alert('New Password and Confirm Password field does not match');
+alert('La nueva contraseña no coincide con la confirmación de contraseña');
 document.changepassword.confirmpassword.focus();
 return false;
 }
@@ -122,7 +122,7 @@ return true;
 				<h3 class="title1">Reset Page</h3>
 				<div class="widget-shadow">
 					<div class="login-top">
-						<h4>Welcome back to BPMS AdminPanel ! </h4>
+						<h4>Bienvenido al panel de administración de BPMS! </h4>
 					</div>
 					<div class="login-body">
 						<form role="form" method="post" action="" name="changepassword" onsubmit="return checkpass();">
@@ -137,7 +137,7 @@ return true;
 							<div class="forgot-grid">
 								
 								<div class="forgot">
-									<a href="index.php">Already have an account</a>
+									<a href="index.php">La cuenta ya existe</a>
 								</div>
 								<div class="clearfix"> </div>
 							</div>
