@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-06-2025 a las 20:04:38
+-- Tiempo de generación: 27-06-2025 a las 19:37:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -42,7 +42,8 @@ CREATE TABLE `tbladmin` (
 --
 
 INSERT INTO `tbladmin` (`ID`, `AdminName`, `UserName`, `MobileNumber`, `Email`, `Password`, `AdminRegdate`) VALUES
-(1, 'administrador', 'admin', 7898799798, 'correo@gmail.com', '25d55ad283aa400af464c76d713c07ad', '2025-05-25 06:21:50');
+(1, 'administrador', 'admin', 3005388714, 'jeison.95garcia@gmail.com', '$2y$10$1MaErKmSGW/pWxWsGQ.CneCrPFNN5qqnRN/WfstR6WT35iSRyM3tK', '2025-05-25 06:21:50'),
+(2, 'administrador', 'admin1', 301145255, 'correo@gmail.com', '$2y$10$ulYdPF2NgVvTB7V6IVq2keXLwSFZTa1qV5QZUCgHHfSxyoGOuP7ha', '2025-06-24 22:57:12');
 
 -- --------------------------------------------------------
 
@@ -238,7 +239,7 @@ ALTER TABLE `tblservices`
 -- AUTO_INCREMENT de la tabla `tbladmin`
 --
 ALTER TABLE `tbladmin`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tblappointment`
