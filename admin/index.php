@@ -3,20 +3,63 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
-if(isset($_POST['login']))
-  {
-    $adminuser=$_POST['username'];
-    $password=md5($_POST['password']);
-    $query=mysqli_query($con,"select ID from tbladmin where  UserName='$adminuser' && Password='$password' ");
-    $ret=mysqli_fetch_array($query);
-    if($ret>0){
-      $_SESSION['bpmsaid']=$ret['ID'];
-     header('location:dashboard.php');
+
+
+// if(isset($_POST['login']))
+//   {
+//     $adminuser=$_POST['username'];
+//     $password=md5($_POST['password']);
+//     $query=mysqli_query($con,"select ID from tbladmin where  UserName='$adminuser' && Password='$password' ");
+//     $ret=mysqli_fetch_array($query);
+//     if($ret>0){
+//       $_SESSION['bpmsaid']=$ret['ID'];
+//      header('location:dashboard.php');
+//     }
+//     else{
+//     $msg="Información Inválida.";
+//     }
+//   }
+
+if (isset($_POST['login'])) {
+    $adminuser = trim($_POST['username']);
+    $password = $_POST['password'];
+
+    // Buscar usuario por nombre
+    $stmt = $con->prepare("SELECT ID, Password FROM tbladmin WHERE UserName = ?");
+    $stmt->bind_param("s", $adminuser);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $userId = $row['ID'];
+        $storedPassword = $row['Password'];
+
+        // CASO 1: contraseña moderna con password_hash()
+        if (password_verify($password, $storedPassword)) {
+            $_SESSION['bpmsaid'] = $userId;
+            header('location:dashboard.php');
+            exit();
+        }
+
+        // CASO 2: contraseña antigua con md5
+        if (md5($password) === $storedPassword) {
+            // Migramos la contraseña a formato moderno
+            $newPasswordHash = password_hash($password, PASSWORD_DEFAULT);
+            $updateStmt = $con->prepare("UPDATE tbladmin SET Password = ? WHERE ID = ?");
+            $updateStmt->bind_param("si", $newPasswordHash, $userId);
+            $updateStmt->execute();
+
+            $_SESSION['bpmsaid'] = $userId;
+            header('location:dashboard.php');
+            exit();
+        }
+
+        // Contraseña incorrecta
+        $msg = "Contraseña incorrecta.";
+    } else {
+        $msg = "Usuario no encontrado.";
     }
-    else{
-    $msg="Información Inválida.";
-    }
-  }
+}
   ?>
 <!DOCTYPE HTML>
 <html>

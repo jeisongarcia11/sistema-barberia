@@ -69,7 +69,7 @@ while ($row=mysqli_fetch_array($ret)) {
 
 ?>
 
-             <tr> <th scope="row"><?php echo $cnt;?></th> <td><?php  echo $row['ServiceName'];?></td> <td><?php  echo $row['Cost'];?></td> </tr>   <?php 
+             <tr> <th scope="row"><?php echo $cnt;?></th> <td><?php  echo $row['ServiceName'];?></td> <td>$ <?php  echo $row['Cost'];?></td> </tr>   <?php 
 $cnt=$cnt+1;
 }?></tbody> </table> 
 			</div>

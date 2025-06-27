@@ -2,9 +2,13 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['bpmsaid']==0)) {
-  header('location:logout.php');
-  } 
+// if (strlen($_SESSION['bpmsaid']==0)) {
+//   header('location:logout.php');
+//   } 
+if (!isset($_SESSION['bpmsaid']) || $_SESSION['bpmsaid'] == 0) {
+    header('location:logout.php');
+    exit();
+}
      ?>
 <!DOCTYPE HTML>
 <html>

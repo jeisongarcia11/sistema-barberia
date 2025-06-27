@@ -2,22 +2,70 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-error_reporting(0);
 
-if(isset($_POST['submit']))
-  {
-    $contactno=$_SESSION['contactno'];
-    $email=$_SESSION['email'];
-    $password=md5($_POST['newpassword']);
+// if(isset($_POST['submit']))
+//   {
+//     $contactno=$_SESSION['contactno'];
+//     $email=$_SESSION['email'];
+//     $password=md5($_POST['newpassword']);
 
-        $query=mysqli_query($con,"update tbladmin set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
-   if($query)
-   {
-echo "<script>alert('Password successfully changed');</script>";
-session_destroy();
-   }
+//         $query=mysqli_query($con,"update tbladmin set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
+//    if($query)
+//    {
+// echo "<script>alert('Password successfully changed');</script>";
+// session_destroy();
+//    }
   
-  }
+//   }
+if (isset($_POST['submit'])) {
+    $adminId = $_SESSION['bpmsaid'];
+    $currentPasswordInput = $_POST['currentpassword'];
+    $newPassword = $_POST['newpassword'];
+
+    if (!$adminId) {
+        echo "<script>alert('No has iniciado sesión.'); window.location.href='logout.php';</script>";
+        exit();
+    }
+
+    // Obtener la contraseña actual desde la base de datos
+    $query = mysqli_query($con, "SELECT Password FROM tbladmin WHERE ID = '$adminId'");
+    $row = mysqli_fetch_array($query);
+
+    if ($row) {
+        $storedPassword = $row['Password'];
+        $isVerified = false;
+
+        // Detectar tipo de hash (md5 o password_hash)
+        if (strlen($storedPassword) == 32) {
+            // Se asume que es un md5 hash
+            if (md5($currentPasswordInput) === $storedPassword) {
+                $isVerified = true;
+            }
+        } else {
+            // Se asume que es password_hash
+            if (password_verify($currentPasswordInput, $storedPassword)) {
+                $isVerified = true;
+            }
+        }
+
+        if ($isVerified) {
+            // Migrar a password_hash() y actualizar con la nueva contraseña
+            $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $update = mysqli_query($con, "UPDATE tbladmin SET Password = '$hashedNewPassword' WHERE ID = '$adminId'");
+
+            if ($update) {
+                echo "<script>alert('Contraseña actualizada correctamente'); window.location.href='dashboard.php';</script>";
+                exit();
+            } else {
+                echo "<script>alert('Error al actualizar la contraseña.');</script>";
+            }
+        } else {
+            echo "<script>alert('La contraseña actual es incorrecta.');</script>";
+        }
+    } else {
+        echo "<script>alert('Usuario no encontrado.');</script>";
+    }
+}
   ?>
 <!DOCTYPE HTML>
 <html>
